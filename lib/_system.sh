@@ -35,7 +35,7 @@ system_git_clone() {
 
   sleep 2
 
-  sudo su - deploy <<EOF
+  sudo su - ubuntu <<EOF
   git clone ${link_git} /home/deploy/${instancia_add}/
 EOF
 
@@ -93,7 +93,7 @@ EOF
 
 sleep 2
 
-sudo su - deploy <<EOF
+sudo su - ubuntu <<EOF
  rm -rf /home/deploy/${empresa_delete}
  pm2 delete ${empresa_delete}-frontend ${empresa_delete}-backend
  pm2 save
@@ -122,7 +122,7 @@ configurar_bloqueio() {
 
   sleep 2
 
-sudo su - deploy <<EOF
+sudo su - ubuntu <<EOF
  pm2 stop ${empresa_bloquear}-backend
  pm2 save
 EOF
@@ -149,7 +149,7 @@ configurar_desbloqueio() {
 
   sleep 2
 
-sudo su - deploy <<EOF
+sudo su - ubuntu <<EOF
  pm2 start ${empresa_bloquear}-backend
  pm2 save
 EOF
@@ -184,7 +184,7 @@ EOF
 
 sleep 2
 
-  sudo su - deploy <<EOF
+  sudo su - ubuntu <<EOF
   cd && cd /home/deploy/${empresa_dominio}/frontend
   sed -i "1c\REACT_APP_BACKEND_URL=https://${alter_backend_url}" .env
   cd && cd /home/deploy/${empresa_dominio}/backend
