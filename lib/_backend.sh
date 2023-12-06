@@ -13,7 +13,7 @@ backend_redis_create() {
 
   sleep 2
 
-  sudo su - root <<EOF
+  sudo su - ubuntu <<EOF
   usermod -aG docker deploy
   docker run --name redis-${instancia_add} -p ${redis_port}:6379 --restart always --detach redis redis-server --requirepass ${mysql_root_password}
   
@@ -232,7 +232,7 @@ backend_nginx_setup() {
 
   backend_hostname=$(echo "${backend_url/https:\/\/}")
 
-sudo su - root << EOF
+sudo su - ubuntu << EOF
 cat > /etc/nginx/sites-available/${instancia_add}-backend << 'END'
 server {
   server_name $backend_hostname;

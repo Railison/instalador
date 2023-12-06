@@ -27,7 +27,7 @@ EOF
 fi
 
 # this file has passwords
-sudo su - root <<EOF
+sudo su - ubuntu <<EOF
 chown root:root "${PROJECT_ROOT}"/config
 chmod 700 "${PROJECT_ROOT}"/config
 EOF

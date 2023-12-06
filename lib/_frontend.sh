@@ -134,7 +134,7 @@ EOF
 
  sleep 2
   
-  sudo su - root <<EOF
+  sudo su - ubuntu <<EOF
    pm2 startup
   sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy
 EOF
@@ -155,7 +155,7 @@ frontend_nginx_setup() {
 
   frontend_hostname=$(echo "${frontend_url/https:\/\/}")
 
-sudo su - root << EOF
+sudo su - ubuntu << EOF
 
 cat > /etc/nginx/sites-available/${instancia_add}-frontend << 'END'
 server {
