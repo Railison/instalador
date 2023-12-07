@@ -14,9 +14,9 @@ system_create_user() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
-  useradd -m -p $(openssl passwd -crypt ${mysql_root_password}) -s /bin/bash -G sudo ubuntu
-  usermod -aG sudo ubuntu
+  sudo su - root <<EOF
+  useradd -m -p $(openssl passwd -crypt ${mysql_root_password}) -s /bin/bash -G sudo deploy
+  usermod -aG sudo deploy
 EOF
 
   sleep 2
@@ -35,8 +35,8 @@ system_git_clone() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
-  git clone ${link_git} /home/ubuntu/${instancia_add}/
+  sudo su - deploy <<EOF
+  git clone ${link_git} /home/deploy/${instancia_add}/
 EOF
 
   sleep 2
@@ -54,7 +54,7 @@ system_update() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt -y update
   sudo apt-get install -y libxshmfence-dev libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
 EOF
@@ -76,7 +76,7 @@ deletar_tudo() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   docker container rm redis-${empresa_delete} --force
   cd && rm -rf /etc/nginx/sites-enabled/${empresa_delete}-frontend
   cd && rm -rf /etc/nginx/sites-enabled/${empresa_delete}-backend  
@@ -93,8 +93,8 @@ EOF
 
 sleep 2
 
-sudo su - ubuntu <<EOF
- rm -rf /home/ubuntu/${empresa_delete}
+sudo su - deploy <<EOF
+ rm -rf /home/deploy/${empresa_delete}
  pm2 delete ${empresa_delete}-frontend ${empresa_delete}-backend
  pm2 save
 EOF
@@ -122,7 +122,7 @@ configurar_bloqueio() {
 
   sleep 2
 
-sudo su - ubuntu <<EOF
+sudo su - deploy <<EOF
  pm2 stop ${empresa_bloquear}-backend
  pm2 save
 EOF
@@ -149,7 +149,7 @@ configurar_desbloqueio() {
 
   sleep 2
 
-sudo su - ubuntu <<EOF
+sudo su - deploy <<EOF
  pm2 start ${empresa_bloquear}-backend
  pm2 save
 EOF
@@ -175,7 +175,7 @@ configurar_dominio() {
 
 sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   cd && rm -rf /etc/nginx/sites-enabled/${empresa_dominio}-frontend
   cd && rm -rf /etc/nginx/sites-enabled/${empresa_dominio}-backend  
   cd && rm -rf /etc/nginx/sites-available/${empresa_dominio}-frontend
@@ -184,10 +184,10 @@ EOF
 
 sleep 2
 
-  sudo su - ubuntu <<EOF
-  cd && cd /home/ubuntu/${empresa_dominio}/frontend
+  sudo su - deploy <<EOF
+  cd && cd /home/deploy/${empresa_dominio}/frontend
   sed -i "1c\REACT_APP_BACKEND_URL=https://${alter_backend_url}" .env
-  cd && cd /home/ubuntu/${empresa_dominio}/backend
+  cd && cd /home/deploy/${empresa_dominio}/backend
   sed -i "2c\BACKEND_URL=https://${alter_backend_url}" .env
   sed -i "3c\FRONTEND_URL=https://${alter_frontend_url}" .env 
 EOF
@@ -196,7 +196,7 @@ sleep 2
    
    backend_hostname=$(echo "${alter_backend_url/https:\/\/}")
 
- sudo su - ubuntu <<EOF
+ sudo su - root <<EOF
   cat > /etc/nginx/sites-available/${empresa_dominio}-backend << 'END'
 server {
   server_name $backend_hostname;
@@ -220,7 +220,7 @@ sleep 2
 
 frontend_hostname=$(echo "${alter_frontend_url/https:\/\/}")
 
-sudo su - ubuntu << EOF
+sudo su - root << EOF
 cat > /etc/nginx/sites-available/${empresa_dominio}-frontend << 'END'
 server {
   server_name $frontend_hostname;
@@ -242,7 +242,7 @@ EOF
 
  sleep 2
 
- sudo su - ubuntu <<EOF
+ sudo su - root <<EOF
   service nginx restart
 EOF
 
@@ -251,8 +251,8 @@ EOF
   backend_domain=$(echo "${backend_url/https:\/\/}")
   frontend_domain=$(echo "${frontend_url/https:\/\/}")
 
-  sudo su - ubuntu <<EOF
-  certbot -m $ubuntu_email \
+  sudo su - root <<EOF
+  certbot -m $deploy_email \
           --nginx \
           --agree-tos \
           --non-interactive \
@@ -280,7 +280,7 @@ system_node_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
   apt-get install -y nodejs
   sleep 2
@@ -308,7 +308,7 @@ system_docker_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt install -y apt-transport-https \
                  ca-certificates curl \
                  software-properties-common
@@ -341,7 +341,7 @@ system_puppeteer_dependencies() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt-get install -y libxshmfence-dev \
                       libgbm-dev \
                       wget \
@@ -402,7 +402,7 @@ system_pm2_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   npm install -g pm2
 
 EOF
@@ -422,7 +422,7 @@ system_snapd_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt install -y snapd
   snap install core
   snap refresh core
@@ -443,7 +443,7 @@ system_certbot_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt-get remove certbot
   snap install --classic certbot
   ln -s /snap/bin/certbot /usr/bin/certbot
@@ -464,7 +464,7 @@ system_nginx_install() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   apt install -y nginx
   rm /etc/nginx/sites-enabled/default
 EOF
@@ -484,7 +484,7 @@ system_nginx_restart() {
 
   sleep 2
 
-  sudo su - ubuntu <<EOF
+  sudo su - root <<EOF
   service nginx restart
 EOF
 
@@ -503,9 +503,9 @@ system_nginx_conf() {
 
   sleep 2
 
-sudo su - ubuntu << EOF
+sudo su - root << EOF
 
-cat > /etc/nginx/conf.d/ubuntu.conf << 'END'
+cat > /etc/nginx/conf.d/deploy.conf << 'END'
 client_max_body_size 100M;
 END
 
@@ -529,8 +529,8 @@ system_certbot_setup() {
   backend_domain=$(echo "${backend_url/https:\/\/}")
   frontend_domain=$(echo "${frontend_url/https:\/\/}")
 
-  sudo su - ubuntu <<EOF
-  certbot -m $ubuntu_email \
+  sudo su - root <<EOF
+  certbot -m $deploy_email \
           --nginx \
           --agree-tos \
           --non-interactive \

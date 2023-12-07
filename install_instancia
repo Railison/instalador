@@ -20,14 +20,14 @@ source "${PROJECT_ROOT}"/lib/manifest.sh
 # user configs file
 if [[ ! -e "${PROJECT_ROOT}"/config ]]; then
   cat << EOF > "${PROJECT_ROOT}"/config
-ubuntu_password=${ubuntu_password}
+deploy_password=${deploy_password}
 mysql_root_password=${mysql_root_password}
 db_pass=${db_pass}
 EOF
 fi
 
 # this file has passwords
-sudo su - ubuntu <<EOF
+sudo su - root <<EOF
 chown root:root "${PROJECT_ROOT}"/config
 chmod 700 "${PROJECT_ROOT}"/config
 EOF
