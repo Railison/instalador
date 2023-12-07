@@ -15,8 +15,8 @@ system_create_user() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  useradd -m -p $(openssl passwd -crypt ${mysql_root_password}) -s /bin/bash -G sudo deploy
-  usermod -aG sudo deploy
+  useradd -m -p $(openssl passwd -crypt ${mysql_root_password}) -s /bin/bash -G sudo ubuntu
+  usermod -aG sudo ubuntu
 EOF
 
   sleep 2
@@ -36,7 +36,7 @@ system_git_clone() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  git clone ${link_git} /home/deploy/${instancia_add}/
+  git clone ${link_git} /home/ubuntu/${instancia_add}/
 EOF
 
   sleep 2
@@ -94,7 +94,7 @@ EOF
 sleep 2
 
 sudo su - ubuntu <<EOF
- rm -rf /home/deploy/${empresa_delete}
+ rm -rf /home/ubuntu/${empresa_delete}
  pm2 delete ${empresa_delete}-frontend ${empresa_delete}-backend
  pm2 save
 EOF
@@ -185,9 +185,9 @@ EOF
 sleep 2
 
   sudo su - ubuntu <<EOF
-  cd && cd /home/deploy/${empresa_dominio}/frontend
+  cd && cd /home/ubuntu/${empresa_dominio}/frontend
   sed -i "1c\REACT_APP_BACKEND_URL=https://${alter_backend_url}" .env
-  cd && cd /home/deploy/${empresa_dominio}/backend
+  cd && cd /home/ubuntu/${empresa_dominio}/backend
   sed -i "2c\BACKEND_URL=https://${alter_backend_url}" .env
   sed -i "3c\FRONTEND_URL=https://${alter_frontend_url}" .env 
 EOF
@@ -252,7 +252,7 @@ EOF
   frontend_domain=$(echo "${frontend_url/https:\/\/}")
 
   sudo su - ubuntu <<EOF
-  certbot -m $deploy_email \
+  certbot -m $ubuntu_email \
           --nginx \
           --agree-tos \
           --non-interactive \
@@ -505,7 +505,7 @@ system_nginx_conf() {
 
 sudo su - ubuntu << EOF
 
-cat > /etc/nginx/conf.d/deploy.conf << 'END'
+cat > /etc/nginx/conf.d/ubuntu.conf << 'END'
 client_max_body_size 100M;
 END
 
@@ -530,7 +530,7 @@ system_certbot_setup() {
   frontend_domain=$(echo "${frontend_url/https:\/\/}")
 
   sudo su - ubuntu <<EOF
-  certbot -m $deploy_email \
+  certbot -m $ubuntu_email \
           --nginx \
           --agree-tos \
           --non-interactive \

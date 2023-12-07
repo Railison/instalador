@@ -15,7 +15,7 @@ frontend_node_dependencies() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  cd /home/deploy/${instancia_add}/frontend
+  cd /home/ubuntu/${instancia_add}/frontend
   npm install --force
 EOF
 
@@ -35,7 +35,7 @@ frontend_node_build() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  cd /home/deploy/${instancia_add}/frontend
+  cd /home/ubuntu/${instancia_add}/frontend
   npm run build
 EOF
 
@@ -55,10 +55,10 @@ frontend_update() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  cd /home/deploy/${empresa_atualizar}
+  cd /home/ubuntu/${empresa_atualizar}
   pm2 stop ${empresa_atualizar}-frontend
   git pull
-  cd /home/deploy/${empresa_atualizar}/frontend
+  cd /home/ubuntu/${empresa_atualizar}/frontend
   npm install
   rm -rf build
   npm run build
@@ -88,7 +88,7 @@ frontend_set_env() {
   backend_url=https://$backend_url
 
 sudo su - ubuntu << EOF
-  cat <<[-]EOF > /home/deploy/${instancia_add}/frontend/.env
+  cat <<[-]EOF > /home/ubuntu/${instancia_add}/frontend/.env
 REACT_APP_BACKEND_URL=${backend_url}
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO = 24
 [-]EOF
@@ -97,7 +97,7 @@ EOF
   sleep 2
 
 sudo su - ubuntu << EOF
-  cat <<[-]EOF > /home/deploy/${instancia_add}/frontend/server.js
+  cat <<[-]EOF > /home/ubuntu/${instancia_add}/frontend/server.js
 //simple express server to run frontend production build;
 const express = require("express");
 const path = require("path");
@@ -127,7 +127,7 @@ frontend_start_pm2() {
   sleep 2
 
   sudo su - ubuntu <<EOF
-  cd /home/deploy/${instancia_add}/frontend
+  cd /home/ubuntu/${instancia_add}/frontend
   pm2 start server.js --name ${instancia_add}-frontend
   pm2 save
 EOF
@@ -136,7 +136,7 @@ EOF
   
   sudo su - ubuntu <<EOF
    pm2 startup
-  sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy
+  sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
 EOF
   sleep 2
 }
